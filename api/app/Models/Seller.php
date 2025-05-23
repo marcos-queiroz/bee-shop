@@ -19,4 +19,9 @@ class Seller extends Model
         'name',
         'email',
     ];
+
+    public function sales(): HasMany
+    {
+        return $this->hasMany(Sale::class);
+    }
 }
