@@ -29,6 +29,6 @@ class SellerService
 
     public function getBySeller(Seller $seller)
     {
-        return $seller->sales()->with('seller')->get();
+        return $seller->with('sales')->get();
     }
 }
