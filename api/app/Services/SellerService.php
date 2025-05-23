@@ -26,4 +26,9 @@ class SellerService
     {
         $seller->delete();
     }
+
+    public function getBySeller(Seller $seller)
+    {
+        return $seller->sales()->with('seller')->get();
+    }
 }

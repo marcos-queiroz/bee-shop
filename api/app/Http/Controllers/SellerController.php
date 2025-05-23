@@ -58,4 +58,10 @@ class SellerController extends Controller
         $this->sellerService->delete($seller);
         return response()->noContent();
     }
+
+    public function salesBySeller(Seller $seller)
+    {
+        $sales = $this->sellerService->getBySeller($seller);
+        return response($sales);
+    }
 }
