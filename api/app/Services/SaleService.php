@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\SaleStatus;
+use App\Events\SaleUpdated;
 use App\Models\Sale;
 
 class SaleService
@@ -13,12 +15,25 @@ class SaleService
 
   public function create(array $data): Sale
   {
-    return Sale::create($data);
+    $sale = Sale::create([
+      ...$data,
+      'commission' => 0,
+      'status' => SaleStatus::Received,
+    ]);
+
+    SaleUpdated::dispatch($sale);
+    return $sale;
   }
 
   public function update(Sale $sale, array $data): Sale
   {
-    $sale->update($data);
+    $sale->update([
+      ...$data,
+      'commission' => 0,
+      'status' => SaleStatus::Received,
+    ]);
+
+    SaleUpdated::dispatch($sale);
     return $sale;
   }
 
