@@ -10,6 +10,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('sellers', SellerController::class);
     Route::get('sellers/{seller}/sales', [SellerController::class, 'salesBySeller']);
+    Route::post('sellers/{seller}/resend-email', [SellerController::class, 'resendDailyEmail']);
     Route::apiResource('sales', SaleController::class);
 });
 

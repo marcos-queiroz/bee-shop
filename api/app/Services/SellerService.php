@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Seller;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class SellerService
@@ -35,5 +36,21 @@ class SellerService
         return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($seller) {
             return $seller->load('sales');
         });
+    }
+
+    public function getSellersWithSalesByDate(\DateTimeInterface $date): Collection
+    {
+        return Seller::with(['sales' => fn($q) => $q->whereDate('sale_date', $date)])
+            ->get();
+    }
+
+    public function getSalesTotal(Collection $sales): float
+    {
+        return $sales->sum('amount');
+    }
+
+    public function getSalesCommission(Collection $sales): float
+    {
+        return $sales->sum('commission');
     }
 }
