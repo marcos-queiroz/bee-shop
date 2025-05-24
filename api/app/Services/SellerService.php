@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Seller;
+use Illuminate\Support\Facades\Cache;
 
 class SellerService
 {
@@ -29,6 +30,10 @@ class SellerService
 
     public function getBySeller(Seller $seller)
     {
-        return $seller->with('sales')->get();
+        $cacheKey = "seller:{$seller->id}:sales";
+
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($seller) {
+            return $seller->load('sales');
+        });
     }
 }

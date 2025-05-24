@@ -31,6 +31,17 @@ class Sale extends Model
         'status' => SaleStatus::class,
     ];
 
+    protected static function booted()
+    {
+        static::saved(function (Sale $sale) {
+            $sale->seller?->forgetSalesCache();
+        });
+
+        static::deleted(function (Sale $sale) {
+            $sale->seller?->forgetSalesCache();
+        });
+    }
+
     public function seller(): BelongsTo
     {
         return $this->belongsTo(Seller::class)->withTrashed();
