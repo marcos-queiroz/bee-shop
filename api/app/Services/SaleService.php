@@ -42,9 +42,9 @@ class SaleService
     $sale->delete();
   }
 
-  public function updateCommision(Sale $sale, array $data): Sale
+  public function updateCommision(Sale $sale): Sale
   {
-    $data['commission'] = $this->calculateCommission($data['amount']);
+    $data['commission'] = $this->calculateCommission($sale->amount);
     $data['status'] = 'calculated';
 
     $sale->update($data);

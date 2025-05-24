@@ -26,8 +26,6 @@ class CalculateCommissionJob implements ShouldQueue
      */
     public function handle(SaleService $saleService): void
     {
-        $saleService->updateCommision($this->sale, [
-            'amount' => $this->sale->amount,
-        ]);
+        $saleService->updateCommision($this->sale);
     }
 }
