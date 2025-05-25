@@ -5,12 +5,29 @@ namespace App\Services;
 use App\Enums\SaleStatus;
 use App\Events\SaleUpdated;
 use App\Models\Sale;
+use Illuminate\Support\Facades\Cache;
 
 class SaleService
 {
     public function all()
     {
-        return Sale::with('seller')->get();
+        $page = request('page', 1);
+        $cacheKey = "sales:page:$page";
+
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () {
+            $salesQuery = Sale::with('seller');
+
+            $totalAmount = (clone $salesQuery)->sum('amount');
+            $totalCommission = (clone $salesQuery)->sum('commission');
+
+            $sales = $salesQuery->paginate(10);
+
+            return [
+                ...$sales->toArray(),
+                'total_amount' => $totalAmount,
+                'total_commission' => $totalCommission,
+            ];
+        });
     }
 
     public function create(array $data): Sale
@@ -67,5 +84,4 @@ class SaleService
     {
         return $sales->sum('amount');
     }
-
 }

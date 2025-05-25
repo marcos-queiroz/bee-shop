@@ -29,12 +29,24 @@ class SellerService
         $seller->delete();
     }
 
-    public function getBySeller(Seller $seller)
+    public function getBySellerPaginated(Seller $seller)
     {
-        $cacheKey = "seller:{$seller->id}:sales";
+        $page = request('page', 1);
+        $cacheKey = "seller:{$seller->id}:sales:page:$page";
 
         return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($seller) {
-            return $seller->load('sales');
+            $salesQuery = $seller->sales();
+
+            $totalAmount = (clone $salesQuery)->sum('amount');
+            $totalCommission = (clone $salesQuery)->sum('commission');
+
+            $sales = $salesQuery->paginate(10);
+
+            return [
+                ...$sales->toArray(),
+                'total_amount' => $totalAmount,
+                'total_commission' => $totalCommission,
+            ];
         });
     }
 

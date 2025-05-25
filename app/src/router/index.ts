@@ -13,7 +13,12 @@ const routes = [
       { path: 'dashboard', component: () => import('@/pages/Dashboard.vue') },
       { path: 'sellers', component: () => import('@/pages/Sellers.vue') },
       { path: 'sales', component: () => import('@/pages/Sales.vue') },
-      { path: '/sellers/:id/sales', component: () => import('@/pages/SellerSales.vue'), meta: { title: 'Vendas do Vendedor' }}
+      {
+        path: 'sellers/:id/sales',
+        name: 'SellerSales',
+        component: () => import('@/pages/SellerSales.vue'),
+        meta: { title: 'Vendas do Vendedor' }
+      }
     ]
   }
 ]

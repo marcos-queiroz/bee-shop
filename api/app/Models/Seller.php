@@ -26,8 +26,10 @@ class Seller extends Model
         return $this->hasMany(Sale::class);
     }
 
-    public function forgetSalesCache()
+    public function forgetSalesCache(): void
     {
-        Cache::forget("seller:{$this->id}:sales");
+        foreach (range(1, 100) as $page) {
+            Cache::forget("seller:{$this->id}:sales:page:$page");
+        }
     }
 }

@@ -3,8 +3,9 @@ import { ref, onMounted } from 'vue'
 import axios from '@/lib/axios'
 import { useAuthStore } from '@/stores/auth'
 import router from '@/router'
+import type { Seller } from '@/types/Seller'
 
-const sellers = ref([])
+const sellers = ref<Seller[]>([])
 const isLoading = ref(true)
 
 const auth = useAuthStore()

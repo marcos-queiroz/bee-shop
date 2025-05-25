@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 
 class Sale extends Model
 {
@@ -35,11 +36,20 @@ class Sale extends Model
     {
         static::saved(function (Sale $sale) {
             $sale->seller?->forgetSalesCache();
+            static::forgetGeneralSalesCache();
         });
 
         static::deleted(function (Sale $sale) {
             $sale->seller?->forgetSalesCache();
+            static::forgetGeneralSalesCache();
         });
+    }
+
+    protected static function forgetGeneralSalesCache(): void
+    {
+        foreach (range(1, 100) as $page) {
+            Cache::forget("sales:page:$page");
+        }
     }
 
     public function seller(): BelongsTo

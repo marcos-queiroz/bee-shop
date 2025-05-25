@@ -64,7 +64,7 @@ class SellerController extends Controller
 
     public function salesBySeller(Seller $seller)
     {
-        $sales = $this->sellerService->getBySeller($seller);
+        $sales = $this->sellerService->getBySellerPaginated($seller);
         return response($sales);
     }
 
