@@ -66,8 +66,35 @@ npm run dev
 
 ## 🛠️ Observações
 
-- Verifique se a API (`api`) está rodando antes de abrir o frontend (`app`).
+- Certifique-se de que a API (`api`) esteja rodando antes de abrir o frontend (`app`).
 - O frontend consome os endpoints da API local (http://localhost).
+
+---
+
+## 🕒 Filas e Comandos Agendados
+
+### Processamento de Filas
+
+O cálculo das comissões é processado em filas. Para processar as tarefas em background, execute o worker com o comando:
+
+```bash
+./vendor/bin/sail artisan queue:work
+```
+
+> **Observação:** Certifique-se de que o comando acima esteja rodando em um terminal separado ou como um serviço. Isso garantirá que os cálculos (e outros processos que utilizam filas) sejam executados corretamente.
+
+---
+
+### Testando Comandos Agendados
+
+Embora o sistema utilize agendamento para executar os comandos de relatório (`report:admin` e `report:sellers`), você pode testá-los manualmente utilizando:
+
+```bash
+./vendor/bin/sail artisan report:admin
+./vendor/bin/sail artisan report:sellers
+```
+
+Esses comandos geram, respectivamente, o relatório de vendas do administrador e o relatório de comissões para os vendedores.
 
 ---
 

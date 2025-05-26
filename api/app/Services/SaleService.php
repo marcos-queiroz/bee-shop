@@ -73,10 +73,12 @@ class SaleService
         return round($amount * 0.085, 2); // 8.5% de comissão
     }
 
-    public function getSalesByDate(\DateTimeInterface $date)
+    public function getSalesByDate(\DateTimeInterface|string $date)
     {
+        $date = is_string($date) ? \Carbon\Carbon::parse($date) : $date;
+
         return Sale::with('seller')
-            ->whereDate('sale_date', $date)
+            ->whereDate('sale_date', $date->toDateString())
             ->get();
     }
 

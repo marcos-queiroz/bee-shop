@@ -50,9 +50,11 @@ class SellerService
         });
     }
 
-    public function getSellersWithSalesByDate(\DateTimeInterface $date): Collection
+    public function getSellersWithSalesByDate(\DateTimeInterface|string $date): Collection
     {
-        return Seller::with(['sales' => fn($q) => $q->whereDate('sale_date', $date)])
+        $date = is_string($date) ? \Carbon\Carbon::parse($date) : $date;
+
+        return Seller::with(['sales' => fn($q) => $q->whereDate('sale_date', $date->toDateString())])
             ->get();
     }
 

@@ -34,7 +34,7 @@ class SendDailySellerReports extends Command
      */
     public function handle(): void
     {
-        $date = now();
+        $date = now()->subDay();
         $sellers = $this->sellerService->getSellersWithSalesByDate($date);
 
         foreach ($sellers as $seller) {

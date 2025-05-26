@@ -35,7 +35,7 @@ class SendDailyAdminReport extends Command
      */
     public function handle(): void
     {
-        $date = now();
+        $date = now()->subDay();
 
         $sales = $this->saleService->getSalesByDate($date);
         $total = $this->saleService->getTotalBySales($sales);
