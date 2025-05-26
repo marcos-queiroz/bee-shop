@@ -14,7 +14,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.setItem('token', data.token)
 
       // você pode adicionar chamada ao perfil aqui
-      router.push('/dashboard')
+      router.push('/sellers')
     },
     logout() {
       this.token = null

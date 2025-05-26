@@ -4,13 +4,12 @@ import Login from "@/pages/Login.vue";
 import SidebarLayout from "@/layouts/SidebarLayout.vue";
 
 const routes = [
-  { path: "/", redirect: "/dashboard" },
+  { path: "/", redirect: "/sellers" },
   { path: "/login", component: Login },
   {
     path: "/",
     component: SidebarLayout,
     children: [
-      { path: "dashboard", component: () => import("@/pages/Dashboard.vue") },
       { path: "sellers", component: () => import("@/pages/Sellers.vue") },
       { path: "sellers/create", component: () => import("@/pages/SellerForm.vue") },
       { path: "sellers/:id", component: () => import("@/pages/SellerShow.vue") },

@@ -17,7 +17,6 @@ const route = useRoute()
 const auth = useAuthStore()
 
 const menuItems = [
-  { label: 'Dashboard', path: '/dashboard' },
   { label: 'Vendedores', path: '/sellers' },
   { label: 'Vendas', path: '/sales' }
 ]
