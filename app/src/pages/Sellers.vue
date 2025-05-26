@@ -24,7 +24,6 @@ import PaginationWrapper from '@/components/PaginationWrapper.vue'
 // Router
 const route = useRoute()
 const router = useRouter()
-const auth = useAuthStore()
 
 // States
 const page = ref(Number(route.query.page) || 1)

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import axios from '@/lib/axios'
 import { useRoute, useRouter } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { sellerSchema } from '@/schemas/sellerSchema'
