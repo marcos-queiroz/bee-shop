@@ -72,6 +72,12 @@ npm run dev
 
 ---
 
+## 📧 Envio de e-mails
+
+Esse projeto conta com o Mailpit, para capturar os e-mails enviados pelo Laravel, para usar basta acessar o endereço `http://localhost:8025/`. 
+
+---
+
 ## 🕒 Filas e Comandos Agendados
 
 ### Processamento de Filas
