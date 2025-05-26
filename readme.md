@@ -1,6 +1,7 @@
 # 🐝 Bee Shop
 
-Sistema de gerenciamento de vendedores e vendas.
+Sistema de gerenciamento de vendedores e vendas desenvolvido com o Laravel 12, VueJS 3 + Vite e a biblioteca de componentes [shadcn/vue](https://www.shadcn-vue.com/) a mesma utilizada no novo Starter Kit do Laravel.
+
 
 ## 🚀 Requisitos
 
