@@ -83,7 +83,11 @@ bee-shop/
 
 ## 🧪 Testes
 
-Em breve...
+Para executar os testes, basta rodar o comando:
+
+```bash
+./vendor/bin/sail artisan test
+```
 
 ---
 
