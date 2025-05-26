@@ -12,31 +12,14 @@ const routes = [
     children: [
       { path: "dashboard", component: () => import("@/pages/Dashboard.vue") },
       { path: "sellers", component: () => import("@/pages/Sellers.vue") },
-      {
-        path: "sellers/create",
-        component: () => import("@/pages/SellerForm.vue"),
-      },
-      {
-        path: "sellers/:id/edit",
-        component: () => import("@/pages/SellerForm.vue"),
-      },
+      { path: "sellers/create", component: () => import("@/pages/SellerForm.vue") },
+      { path: "sellers/:id", component: () => import("@/pages/SellerShow.vue") },
+      { path: "sellers/:id/edit", component: () => import("@/pages/SellerForm.vue") },
       { path: "sales", component: () => import("@/pages/Sales.vue") },
-      {
-        path: "sellers/:id/sales",
-        name: "SellerSales",
-        component: () => import("@/pages/SellerSales.vue"),
-        meta: { title: "Vendas do Vendedor" },
-      },
-      {
-        path: "sellers/:id/sales/create",
-        name: "CreateSale",
-        component: () => import("@/pages/SaleForm.vue"),
-      },
-      {
-        path: "sellers/:sellerId/sales/:saleId/edit",
-        name: "EditSale",
-        component: () => import("@/pages/SaleForm.vue"),
-      },
+      { path: "sellers/:id/sales", component: () => import("@/pages/SellerSales.vue") },
+      { path: "sellers/:id/sales/create", component: () => import("@/pages/SaleForm.vue") },
+      { path: "sellers/:sellerId/sales/:saleId", component: () => import("@/pages/SaleShow.vue")},
+      { path: "sellers/:sellerId/sales/:saleId/edit", component: () => import("@/pages/SaleForm.vue") },
     ],
   },
 ];

@@ -137,10 +137,14 @@ const resendEmail = async (seller: Seller) => {
         <tbody>
           <tr v-for="seller in sellers" :key="seller.id" class="hover:bg-accent">
             <td class="p-2">{{ seller.id }}</td>
-            <td class="p-2">{{ seller.name }}</td>
+            <td class="p-2">
+              <router-link :to="`/sellers/${seller.id}`" class="text-blue-600 hover:underline">
+                {{ seller.name }}
+              </router-link>
+            </td>
             <td class="p-2">{{ seller.email }}</td>
             <td class="p-2 text-center space-x-2">
-              <Button variant="link" size="sm" @click="goToSales(seller.id)">Ver vendas</Button>
+              <Button variant="link" size="sm" @click="goToSales(seller.id)">Vendas</Button>
               <Button variant="link" size="sm" class="text-yellow-600" @click="editSeller(seller.id)">
                 Editar
               </Button>

@@ -88,6 +88,10 @@ const deleteSale = async (saleId: number) => {
     toast.error('Erro ao excluir venda.')
   }
 }
+
+const viewSale = (saleId: number, sellerId: number) => {
+  router.push(`/sellers/${sellerId}/sales/${saleId}`)
+}
 </script>
 
 <template>
@@ -121,6 +125,10 @@ const deleteSale = async (saleId: number) => {
             <td class="p-2">{{ formatCurrency(sale.commission) }}</td>
             <td class="p-2">{{ formatDate(sale.sale_date) }}</td>
             <td class="p-2 text-center space-x-2">
+              <Button variant="link" size="sm" class="text-blue-600" @click="viewSale(sale.id, sale.seller_id)">
+                Ver
+              </Button>
+
               <Button variant="link" size="sm" class="text-yellow-600" @click="editSale(sale.id)">
                 Editar
               </Button>
