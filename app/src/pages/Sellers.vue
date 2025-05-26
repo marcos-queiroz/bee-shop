@@ -37,7 +37,6 @@ const meta = ref({
   total: 0,
 })
 
-// Fetch Sellers paginated
 const fetchSellers = async () => {
   try {
     isLoading.value = true
@@ -49,6 +48,12 @@ const fetchSellers = async () => {
       perPage: data.per_page,
       total: data.total,
     }
+
+    sellers.value.forEach((seller) => {
+      if (!emailDateMap.value[seller.id]) {
+        emailDateMap.value[seller.id] = getYesterday()
+      }
+    })
   } catch (error) {
     console.error('Erro ao carregar vendedores:', error)
   } finally {
@@ -81,6 +86,26 @@ const confirmDelete = async (seller: Seller) => {
   } catch (err) {
     console.error(err)
     toast.error('Erro ao excluir vendedor.')
+  }
+}
+
+const emailDateMap = ref<{ [key: number]: string }>({})
+
+const getYesterday = () => {
+  const date = new Date()
+  date.setDate(date.getDate() - 1)
+  return date.toISOString().split('T')[0]
+}
+
+const resendEmail = async (seller: Seller) => {
+  const date = emailDateMap.value[seller.id] || getYesterday()
+
+  try {
+    await axios.post(`/sellers/${seller.id}/resend-email`, { date })
+    toast.success(`E-mail reenviado para ${seller.name} (${date})`)
+  } catch (err) {
+    console.error(err)
+    toast.error(`Erro ao reenviar e-mail para ${seller.name}`)
   }
 }
 </script>
@@ -119,6 +144,33 @@ const confirmDelete = async (seller: Seller) => {
               <Button variant="link" size="sm" class="text-yellow-600" @click="editSeller(seller.id)">
                 Editar
               </Button>
+
+              <AlertDialog>
+                <AlertDialogTrigger as-child>
+                  <Button variant="link" size="sm" class="text-blue-600">
+                    Reenviar E-mail
+                  </Button>
+                </AlertDialogTrigger>
+
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Reenviar e-mail de resumo?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Selecione a data de referência para reenvio.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+
+                  <div class="mt-4">
+                    <input v-model="emailDateMap[seller.id]" type="date"
+                      class="w-full border border-input rounded px-3 py-2 text-sm" />
+                  </div>
+
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction @click="resendEmail(seller)">Enviar</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
 
               <AlertDialog>
                 <AlertDialogTrigger as-child>

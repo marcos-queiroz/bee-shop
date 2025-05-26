@@ -20,7 +20,7 @@ class SaleService
             $totalAmount = (clone $salesQuery)->sum('amount');
             $totalCommission = (clone $salesQuery)->sum('commission');
 
-            $sales = $salesQuery->paginate(10);
+            $sales = $salesQuery->orderBy('sale_date', 'desc')->paginate(10);
 
             return [
                 ...$sales->toArray(),

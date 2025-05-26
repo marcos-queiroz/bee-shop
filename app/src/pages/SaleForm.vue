@@ -16,6 +16,7 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { toast } from 'vue-sonner'
+import type { Seller } from '@/types/Seller'
 
 const router = useRouter()
 const route = useRoute()
@@ -23,6 +24,8 @@ const route = useRoute()
 const sellerId = Number(route.params.id || route.params.sellerId)
 const saleId = route.params.saleId
 const isEdit = !!saleId
+
+const seller = ref<Seller | null>(null)
 
 const formSchema = toTypedSchema(z.object({
   amount: z.coerce.number({ invalid_type_error: 'Informe um valor numérico' }).min(0.01, 'Valor obrigatório'),
@@ -34,20 +37,25 @@ const { handleSubmit, setValues } = useForm({
 })
 
 onMounted(async () => {
+  if (sellerId) {
+    try {
+      const { data } = await axios.get(`/sellers/${sellerId}`)
+      seller.value = data
+    } catch {
+      toast.error('Erro ao carregar dados do vendedor.')
+    }
+  }
+
   if (isEdit) {
     try {
       const { data } = await axios.get(`/sales/${saleId}`)
       setValues({
         amount: data.amount,
-        sale_date: data.sale_date?.substring(0, 10),
+        sale_date: data.sale_date?.substring(0, 10), // yyyy-mm-dd
       })
     } catch {
       toast.error('Erro ao carregar dados da venda.')
-      if (sellerId) {
-        router.push(`/sellers/${sellerId}/sales`)
-      } else {
-        router.push('/sales')
-      }
+      router.push(sellerId ? `/sellers/${sellerId}/sales` : '/sales')
     }
   }
 })
@@ -61,11 +69,8 @@ const onSubmit = handleSubmit(async (values) => {
       await axios.post('/sales', { ...values, seller_id: sellerId })
       toast.success('Venda cadastrada com sucesso!')
     }
-    if (sellerId) {
-      router.push(`/sellers/${sellerId}/sales`)
-    } else {
-      router.push('/sales')
-    }
+
+    router.push(sellerId ? `/sellers/${sellerId}/sales` : '/sales')
   } catch (err: any) {
     const msg = err?.response?.data?.message || 'Erro ao salvar venda.'
     toast.error(msg)
@@ -75,9 +80,15 @@ const onSubmit = handleSubmit(async (values) => {
 
 <template>
   <div class="max-w-md space-y-6">
-    <h2 class="text-xl font-semibold">
-      {{ isEdit ? 'Editar Venda' : 'Nova Venda' }}
-    </h2>
+    <div>
+      <h2 class="text-xl font-semibold">
+        {{ isEdit ? 'Editar Venda' : 'Nova Venda' }}
+      </h2>
+      <p v-if="seller" class="text-sm">
+        <strong>{{ seller.name }}</strong> | {{ seller.email }}
+      </p>
+    </div>
+
     <form @submit.prevent="onSubmit" class="space-y-4">
       <FormField v-slot="{ componentField }" name="amount">
         <FormItem>
