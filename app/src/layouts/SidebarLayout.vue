@@ -17,6 +17,9 @@ import {
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb'
 
+import { Toaster } from '@/components/ui/sonner'
+import 'vue-sonner/style.css'
+
 const route = useRoute()
 const crumbs = computed(() => {
   const segments = route.path.split('/').filter(Boolean)
@@ -30,7 +33,7 @@ const crumbs = computed(() => {
 <template>
   <SidebarProvider :style="{ '--sidebar-width': '19rem' }">
     <AppSidebar />
-    
+
     <SidebarInset>
       <header class="flex h-16 items-center gap-2 px-4 border-b">
         <SidebarTrigger class="-ml-1" />
@@ -57,6 +60,7 @@ const crumbs = computed(() => {
 
       <main class="flex-1 p-4">
         <RouterView />
+        <Toaster />
       </main>
     </SidebarInset>
 

@@ -1,16 +1,22 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import axios from '@/lib/axios'
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination'
 import { useRoute, useRouter } from 'vue-router'
 import type { Sale } from '@/types/Sale';
+import { toast } from 'vue-sonner'
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import PaginationWrapper from './PaginationWrapper.vue';
 
 // Props
 const props = defineProps<{
@@ -66,6 +72,22 @@ watch(page, (newPage) => {
   router.replace({ query: { ...route.query, page: newPage } })
   fetchSales()
 })
+
+const editSale = (saleId: number) => {
+  const sellerId = route.params.id
+  router.push(`/sellers/${sellerId}/sales/${saleId}/edit`)
+}
+
+const deleteSale = async (saleId: number) => {
+  try {
+    await axios.delete(`/sales/${saleId}`)
+    toast.success('Venda excluída com sucesso!')
+    await fetchSales()
+  } catch (err) {
+    console.error(err)
+    toast.error('Erro ao excluir venda.')
+  }
+}
 </script>
 
 <template>
@@ -88,6 +110,7 @@ watch(page, (newPage) => {
             <th class="p-2">Valor</th>
             <th class="p-2">Comissão</th>
             <th class="p-2">Data</th>
+            <th class="p-2 text-center">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -97,23 +120,36 @@ watch(page, (newPage) => {
             <td class="p-2">{{ formatCurrency(sale.amount) }}</td>
             <td class="p-2">{{ formatCurrency(sale.commission) }}</td>
             <td class="p-2">{{ formatDate(sale.sale_date) }}</td>
+            <td class="p-2 text-center space-x-2">
+              <Button variant="link" size="sm" class="text-yellow-600" @click="editSale(sale.id)">
+                Editar
+              </Button>
+
+              <AlertDialog>
+                <AlertDialogTrigger as-child>
+                  <Button variant="link" size="sm" class="text-red-600">
+                    Excluir
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Deseja excluir esta venda?</AlertDialogTitle>
+                    <AlertDialogDescription>Esta ção não pode ser desfeita.</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction @click="deleteSale(sale.id)">Sim, excluir</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </td>
+
           </tr>
         </tbody>
       </table>
 
       <div class="mt-4" v-if="meta">
-        <Pagination v-model:page="page" :items-per-page="meta.perPage" :total="meta.total">
-          <PaginationContent v-slot="{ items }">
-            <PaginationPrevious />
-            <template v-for="(item, index) in items" :key="index">
-              <PaginationItem v-if="item.type === 'page'" :value="item.value" :is-active="item.value === page">
-                {{ item.value }}
-              </PaginationItem>
-              <PaginationEllipsis v-else-if="item.type === 'ellipsis'" />
-            </template>
-            <PaginationNext />
-          </PaginationContent>
-        </Pagination>
+        <PaginationWrapper v-model="page" :perPage="meta.perPage" :total="meta.total" />
       </div>
     </div>
   </div>

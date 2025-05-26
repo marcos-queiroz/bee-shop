@@ -10,7 +10,7 @@ class SellerService
 {
     public function all()
     {
-        return Seller::all();
+        return Seller::paginate(10);
     }
 
     public function create(array $data): Seller

@@ -1,36 +1,99 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from '@/lib/axios'
 import { useAuthStore } from '@/stores/auth'
-import router from '@/router'
 import type { Seller } from '@/types/Seller'
 
-const sellers = ref<Seller[]>([])
-const isLoading = ref(true)
+import { toast } from 'vue-sonner'
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog'
 
+import { Button } from '@/components/ui/button'
+import PaginationWrapper from '@/components/PaginationWrapper.vue'
+
+// Router
+const route = useRoute()
+const router = useRouter()
 const auth = useAuthStore()
 
-onMounted(async () => {
+// States
+const page = ref(Number(route.query.page) || 1)
+const sellers = ref<Seller[]>([])
+const isLoading = ref(true)
+const meta = ref({
+  currentPage: 1,
+  lastPage: 1,
+  perPage: 10,
+  total: 0,
+})
+
+// Fetch Sellers paginated
+const fetchSellers = async () => {
   try {
     isLoading.value = true
-    const { data } = await axios.get('/sellers')
-
-    sellers.value = data
+    const { data } = await axios.get(`/sellers?page=${page.value}`)
+    sellers.value = data.data
+    meta.value = {
+      currentPage: data.current_page,
+      lastPage: data.last_page,
+      perPage: data.per_page,
+      total: data.total,
+    }
   } catch (error) {
     console.error('Erro ao carregar vendedores:', error)
   } finally {
     isLoading.value = false
   }
+}
+
+onMounted(fetchSellers)
+
+// Atualiza ao mudar de página
+watch(page, (newPage) => {
+  router.replace({ query: { ...route.query, page: newPage } })
+  fetchSellers()
 })
 
+// Ações
 const goToSales = (sellerId: number) => {
   router.push(`/sellers/${sellerId}/sales`)
+}
+
+const editSeller = (sellerId: number) => {
+  router.push(`/sellers/${sellerId}/edit`)
+}
+
+const confirmDelete = async (seller: Seller) => {
+  try {
+    await axios.delete(`/sellers/${seller.id}`)
+    toast.success('Vendedor excluído com sucesso!')
+    fetchSellers()
+  } catch (err) {
+    console.error(err)
+    toast.error('Erro ao excluir vendedor.')
+  }
 }
 </script>
 
 <template>
   <div class="space-y-4">
     <h2 class="text-xl font-semibold">Vendedores</h2>
+
+    <div class="flex justify-end">
+      <Button @click="router.push('/sellers/create')" class="mb-4">
+        Novo Vendedor
+      </Button>
+    </div>
 
     <div v-if="isLoading" class="space-y-2">
       <div class="h-6 bg-muted animate-pulse rounded" v-for="i in 5" :key="i" />
@@ -43,7 +106,7 @@ const goToSales = (sellerId: number) => {
             <th class="p-2">#</th>
             <th class="p-2">Nome</th>
             <th class="p-2">E-mail</th>
-            <th class="p-2 text-right">Ações</th>
+            <th class="p-2 text-center">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -51,14 +114,41 @@ const goToSales = (sellerId: number) => {
             <td class="p-2">{{ seller.id }}</td>
             <td class="p-2">{{ seller.name }}</td>
             <td class="p-2">{{ seller.email }}</td>
-            <td class="p-2 text-right">
-              <button class="text-primary underline hover:opacity-80" @click="goToSales(seller.id)">
-                Ver vendas
-              </button>
+            <td class="p-2 text-center space-x-2">
+              <Button variant="link" size="sm" @click="goToSales(seller.id)">Ver vendas</Button>
+              <Button variant="link" size="sm" class="text-yellow-600" @click="editSeller(seller.id)">
+                Editar
+              </Button>
+
+              <AlertDialog>
+                <AlertDialogTrigger as-child>
+                  <Button variant="link" size="sm" class="text-red-600">
+                    Excluir
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Deseja mesmo excluir?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Esta ação não poderá ser desfeita.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction @click="confirmDelete(seller)">
+                      Sim, excluir
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </td>
           </tr>
         </tbody>
       </table>
+
+      <div class="mt-4" v-if="meta.total > meta.perPage">
+        <PaginationWrapper v-model="page" :perPage="meta.perPage" :total="meta.total" />
+      </div>
     </div>
   </div>
 </template>
