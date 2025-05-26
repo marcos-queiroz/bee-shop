@@ -16,6 +16,11 @@ Sistema de gerenciamento de vendedores e vendas.
 
 ```bash
 git clone https://github.com/marcos-queiroz/bee-shop.git
+```
+
+Acesse o diretório do projeto
+
+```bash
 cd bee-shop
 ```
 
@@ -26,16 +31,16 @@ cd bee-shop
 ```bash
 cd api
 
-# Instale as dependências
-composer install
-
 # Copie o arquivo de ambiente
 cp .env.dev .env
+
+# Instale as dependências
+composer install
 
 # Suba os containers (Laravel Sail)
 ./vendor/bin/sail up -d
 
-# Rode as migrations
+# Rode as migrations e seeds
 ./vendor/bin/sail artisan migrate --seed
 ```
 
@@ -55,7 +60,7 @@ npm install
 npm run dev
 ```
 
-> O app estará disponível em: http://localhost:5174
+> O app normalmente estará disponível em: http://localhost:5173 ou http://localhost:5174, verifique a saída no terminal.
 
 ---
 
